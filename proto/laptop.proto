@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto3"; 
 
 package pb;
 
@@ -6,6 +6,22 @@ option go_package = "./pb";
 
 import "proto/processor.proto";
 import "proto/memory.proto";
+import "proto/storage.proto";
+import "proto/screen.proto";
+import "proto/keyboard.proto";
+import "google/protobuf/timestamp.proto";
+
+message CreateLaptopRequest {
+    Laptop laptop = 1;
+}
+
+message  CreateLaptopResponse {
+    string id = 2;
+}
+
+service LaptopService {
+    rpc CreateLaptop(CreateLaptopRequest) returns (CreateLaptopResponse) {};
+}
 
 message Laptop {
     string id = 1;
@@ -13,4 +29,15 @@ message Laptop {
     string name = 3;
     CPU cpu = 4;
     Memory ram = 5;
+    repeated GPU gpus = 6;
+    repeated Storage storages = 7;
+    Screen screen = 8;
+    Keyboard keyboard = 9;
+    oneof weight {
+        double weight_kg = 10;
+        double weight_lb = 11;
+    }
+    double price_usd = 12;
+    uint32 release_year = 13;
+    google.protobuf.Timestamp updated_at = 14;
 }

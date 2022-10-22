@@ -1,6 +1,7 @@
 clean:
 	rm -rf pb
 	rm -rf swagger
+	rm -rf tmp
 
 gen:
 	protoc --go_out=. --go_opt=paths=import --go-grpc_out=. --go-grpc_opt=paths=import ./proto/*.proto 
@@ -33,7 +34,10 @@ client-tls:
 	go run cmd/client/main.go -address 0.0.0.0:8080 -tls
 
 test:
-	go test -cover -race ./...
+	rm -rf tmp
+	mkdir tmp
+	go test -cover -race -v ./...
+	rm -rf tmp/*
 
 cert:
 	cd cert; ./gen.sh; cd ..
