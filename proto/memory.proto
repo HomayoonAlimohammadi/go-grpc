@@ -1,10 +1,11 @@
 syntax = "proto3";
 
-package proto;
+package pb; 
 
-option go_package = "pb";
+option go_package = "./pb";
 
-enum Unit {
+message Memory {
+  enum Unit {
     UNKNOWN = 0;
     BIT = 1;
     BYTE = 2;
@@ -12,9 +13,8 @@ enum Unit {
     MEGABYTE = 4;
     GIGABYTE = 5;
     TERABYTE = 6;
-}
+  }
 
-message Memory {
-    uint64 value = 1;
-    Unit unit = 2;
+  uint64 value = 1;
+  Unit unit = 2;
 }
