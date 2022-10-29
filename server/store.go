@@ -20,10 +20,12 @@ func (store *InMemoryLaptopStore) Save(laptop *pb.Laptop) error {
 	store.mutex.Lock()
 	defer store.mutex.Unlock()
 
-	if _, ok := store.data[laptop.Id]; ok == true {
+	if _, ok := store.data[laptop.Id]; ok {
 		return ErrorLaptopAlreadyExists
 	}
 
+	// deepcopy to prevent unwanted changes in the records
+	// couldn't just use pb.Laptop instead of doing this deepcopy on *pb.Laptop?
 	copied, err := deepCopy(laptop)
 	if err != nil {
 		return err

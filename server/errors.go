@@ -1,7 +1,15 @@
 package server
 
-import "errors"
+import (
+	"errors"
 
-var ErrorLaptopAlreadyExists = errors.New("laptop already exists")
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
 
-var ErrorCanNotCopyLaptop = errors.New("can not copy laptop")
+var (
+	ErrorContextCanceled         = status.Error(codes.Canceled, "request is canceled")
+	ErrorContextDeadlineExceeded = status.Error(codes.DeadlineExceeded, "deadline is exceeded")
+	ErrorLaptopAlreadyExists     = errors.New("laptop already exists")
+	ErrorCanNotCopyLaptop        = errors.New("can not copy laptop")
+)

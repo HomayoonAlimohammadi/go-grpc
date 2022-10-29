@@ -36,8 +36,8 @@ client-tls:
 test:
 	rm -rf tmp
 	mkdir tmp
-	go test -cover -race -v ./...
-	rm -rf tmp/*
+	go test -cover -race -v -coverprofile=c.out ./...
+	rm -rf tmp
 
 cert:
 	cd cert; ./gen.sh; cd ..

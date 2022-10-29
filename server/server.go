@@ -12,6 +12,7 @@ import (
 )
 
 type LaptopServer struct {
+	pb.UnimplementedLaptopServiceServer
 	store LaptopStore
 }
 
@@ -21,7 +22,7 @@ func NewLaptopServer(store LaptopStore) *LaptopServer {
 	}
 }
 
-func (server *LaptopServer) CreateLaptop(ctx context.Context, request *pb.CreateLaptopRequest) (*pb.CreateLaptopResponse, error) {
+func (server LaptopServer) CreateLaptop(ctx context.Context, request *pb.CreateLaptopRequest) (*pb.CreateLaptopResponse, error) {
 	laptop := request.GetLaptop()
 	log.Printf("receive a create-laptop request with id: %s", laptop.Id)
 
@@ -32,22 +33,23 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, request *pb.Create
 			return nil, status.Errorf(codes.InvalidArgument, "laptop ID is not a valid UUID: %v", err)
 		}
 	} else {
+		// generate new UUID if not already exists
 		id, err := uuid.NewRandom()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "cannot generate a new laptop ID: %v", err)
 		}
 		laptop.Id = id.String()
 	}
-	if ctx.Err() == context.Canceled {
-		log.Print("request is canceled")
-		return nil, status.Error(codes.Canceled, "request is canceled")
+
+	// check for context cancelation or deadline exceeded
+	if isContextCanceled(ctx) {
+		return nil, ErrorContextCanceled
+	}
+	if isContextDeadlineExceeded(ctx) {
+		return nil, ErrorContextDeadlineExceeded
 	}
 
-	if ctx.Err() == context.DeadlineExceeded {
-		log.Print("deadline is exceeded")
-		return nil, status.Error(codes.DeadlineExceeded, "deadline is exceeded")
-	}
-
+	// try saving the laptop
 	err := server.store.Save(laptop)
 	if err != nil {
 		code := codes.Internal
@@ -63,4 +65,12 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, request *pb.Create
 		Id: laptop.Id,
 	}
 	return res, nil
+}
+
+func isContextCanceled(ctx context.Context) bool {
+	return ctx.Err() == context.Canceled
+}
+
+func isContextDeadlineExceeded(ctx context.Context) bool {
+	return ctx.Err() == context.DeadlineExceeded
 }

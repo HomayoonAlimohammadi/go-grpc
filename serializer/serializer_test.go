@@ -13,13 +13,13 @@ import (
 )
 
 func setup() {
-	fmt.Println("setting up the environment...")
+	fmt.Printf("\033[1;33m%s\033[0m", "setting up the environment...\n")
 	fmt.Printf("\033[1;33m%s\033[0m", "> Setup completed\n")
 }
 
 func teardown() {
+	fmt.Printf("\033[1;33m%s\033[0m", "Deleting all traces of the test...\n")
 	fmt.Printf("\033[1;33m%s\033[0m", "> Teardown completed\n")
-	fmt.Println("deleted all traces of the test")
 }
 
 func TestMain(m *testing.M) {
