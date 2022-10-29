@@ -9,6 +9,7 @@ import "proto/memory.proto";
 import "proto/storage.proto";
 import "proto/screen.proto";
 import "proto/keyboard.proto";
+import "proto/filter.proto";
 import "google/protobuf/timestamp.proto";
 
 message CreateLaptopRequest {
@@ -19,8 +20,17 @@ message  CreateLaptopResponse {
     string id = 2;
 }
 
+message SearchLaptopRequest {
+    Filter filter = 1;
+}
+
+message SearchLaptopResponse {
+    Laptop laptop = 1;
+}
+
 service LaptopService {
     rpc CreateLaptop(CreateLaptopRequest) returns (CreateLaptopResponse) {};
+    rpc SearchLaptop(SearchLaptopRequest) returns (stream SearchLaptopResponse) {};
 }
 
 message Laptop {

@@ -11,7 +11,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "display the version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("PCBook Version %s\n", version)
+		fmt.Printf("PC-Store Version %s\n", version)
 	},
 }
 

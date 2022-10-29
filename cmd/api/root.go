@@ -10,7 +10,7 @@ import (
 var (
 	webPort string
 	rootCmd = &cobra.Command{
-		Use:   "pcbook",
+		Use:   "pcstore",
 		Short: "An application for saving and finding laptop instances.",
 		Long: `This application runs a gRPC server and client for doing some 
 	simple tasks on instances of Laptop with different parts.`,
@@ -34,7 +34,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pcbook.yaml)")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pcstore.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

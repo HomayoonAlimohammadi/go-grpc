@@ -1,4 +1,4 @@
-module pcbook
+module pcstore
 
 go 1.17
 

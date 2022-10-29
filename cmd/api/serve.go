@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"pcbook/pb"
-	"pcbook/server"
+	"pcstore/pb"
+	"pcstore/server"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"

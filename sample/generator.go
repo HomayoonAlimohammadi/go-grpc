@@ -1,7 +1,7 @@
 package sample
 
 import (
-	"pcbook/pb"
+	"pcstore/pb"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

@@ -1,10 +1,10 @@
 package server
 
 import (
-	"pcbook/pb"
+	"context"
+	"log"
+	"pcstore/pb"
 	"sync"
-
-	"github.com/jinzhu/copier"
 )
 
 type LaptopStore interface {
@@ -14,6 +14,9 @@ type LaptopStore interface {
 	// potentially returns an instance of pb.Laptop and an error
 	// given the ID string of the laptop
 	Find(string) (*pb.Laptop, error)
+
+	// search for valid laptops given a specific filter
+	Search(context.Context, *pb.Filter, func(laptop *pb.Laptop) error) error
 }
 
 type JsonLaptopStore struct {
@@ -70,15 +73,30 @@ func (store *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
 	return deepCopy(laptop)
 }
 
-func deepCopy(laptop *pb.Laptop) (*pb.Laptop, error) {
-	other := &pb.Laptop{}
+func (store *InMemoryLaptopStore) Search(ctx context.Context, filter *pb.Filter, found func(laptop *pb.Laptop) error) error {
+	store.mutex.RLock()
+	defer store.mutex.RUnlock()
 
-	err := copier.Copy(other, laptop)
-	if err != nil {
-		return nil, ErrorCanNotCopyLaptop
+	for _, laptop := range store.data {
+		err := ctx.Err()
+		if err == context.Canceled || err == context.DeadlineExceeded {
+			log.Println("context is canceled")
+			return err // is that better to return nil?
+		}
+
+		if isQualifiedLaptop(laptop, filter) {
+			copied, err := deepCopy(laptop)
+			if err != nil {
+				return err
+			}
+
+			err = found(copied)
+			if err != nil {
+				return err
+			}
+		}
 	}
-
-	return other, nil
+	return nil
 }
 
 func NewInMemoryLaptopStore() *InMemoryLaptopStore {

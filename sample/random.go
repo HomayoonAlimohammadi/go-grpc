@@ -2,7 +2,7 @@ package sample
 
 import (
 	"math/rand"
-	"pcbook/pb"
+	"pcstore/pb"
 	"time"
 
 	"github.com/google/uuid"

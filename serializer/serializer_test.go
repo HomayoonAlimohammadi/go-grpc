@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"pcbook/pb"
-	"pcbook/sample"
+	"pcstore/pb"
+	"pcstore/sample"
 	"testing"
 
 	"github.com/stretchr/testify/require"

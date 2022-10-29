@@ -1,7 +1,7 @@
 package main
 
 import (
-	"pcbook/cmd/api"
+	"pcstore/cmd/api"
 )
 
 func main() {

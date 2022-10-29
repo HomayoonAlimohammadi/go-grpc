@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
-	"pcbook/pb"
+	"pcstore/pb"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -67,10 +67,26 @@ func (server LaptopServer) CreateLaptop(ctx context.Context, request *pb.CreateL
 	return res, nil
 }
 
-func isContextCanceled(ctx context.Context) bool {
-	return ctx.Err() == context.Canceled
-}
+func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.LaptopService_SearchLaptopServer) error {
+	filter := req.GetFilter()
+	log.Printf("recieve a SearchLaptop request with filter: %v", filter)
 
-func isContextDeadlineExceeded(ctx context.Context) bool {
-	return ctx.Err() == context.DeadlineExceeded
+	err := server.store.Search(
+		stream.Context(),
+		filter,
+		func(laptop *pb.Laptop) error {
+			res := &pb.SearchLaptopResponse{Laptop: laptop}
+			err := stream.Send(res)
+			if err != nil {
+				return err
+			}
+
+			log.Println("sent laptop with id:", laptop.Id)
+			return nil
+		},
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "unexpected error: %v", err)
+	}
+	return nil
 }
