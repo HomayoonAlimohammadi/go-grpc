@@ -1,48 +1,28 @@
-clean:
-	rm -rf pb
-	rm -rf swagger
-	rm -rf tmp
+.PHONY: clean gen serve client test coverage 
+
+# Variables
+COVERAGE_THRESHOLD := 78
 
 gen:
 	protoc --go_out=. --go_opt=paths=import --go-grpc_out=. --go-grpc_opt=paths=import ./proto/*.proto 
 
-server1:
-	go run cmd/server/main.go -port 50051
-
-server2:
-	go run cmd/server/main.go -port 50052
-
-server1-tls:
-	go run cmd/server/main.go -port 50051 -tls
-
-server2-tls:
-	go run cmd/server/main.go -port 50052 -tls
-
-server:
-	go run cmd/server/main.go -port 8080
-
-server-tls:
-	go run cmd/server/main.go -port 8080 -tls
-
-rest:
-	go run cmd/server/main.go -port 8081 -type rest -endpoint 0.0.0.0:8080
+serve:
+	go run main.go serve
 
 client:
-	go run cmd/client/main.go -address 0.0.0.0:8080
+	go run main.go client 
 
-client-tls:
-	go run cmd/client/main.go -address 0.0.0.0:8080 -tls
-
-test:
+test: 
 	rm -rf tmp
 	mkdir tmp
 	go test -cover -race -v -coverprofile=c.out ./...
 	rm -rf tmp
 
-coverage: 
-	go tool cover -func c.out | grep total | awk '{print substr($$3, 1, length($$3)-1)}'
+coverage: test
+	$(eval totalCoverage := $(shell go tool cover -func=c.out | grep total | grep -Eo '[0-9]+\.[0-9]+'))
+	$(info Current test coverage: $(totalCoverage)%.)
+	@if [ $(shell echo "$(totalCoverage) >= $(COVERAGE_THRESHOLD)" | bc -l) -eq 1 ]; then echo PASSED.; else echo FAILED. Threshold is $(COVERAGE_THRESHOLD)%.; false; fi
 
-cert:
-	cd cert; ./gen.sh; cd ..
-
-.PHONY: clean gen server client test cert 
+clean:
+	rm -rf pb
+	rm -rf tmp
