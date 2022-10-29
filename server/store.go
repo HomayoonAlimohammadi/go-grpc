@@ -16,6 +16,24 @@ type LaptopStore interface {
 	Find(string) (*pb.Laptop, error)
 }
 
+type JsonLaptopStore struct {
+	mutex sync.RWMutex
+	path  string
+}
+
+func (store *JsonLaptopStore) Save(laptop *pb.Laptop) error {
+	// append the laptop to the existing .json file
+	// TODO implement this feature
+	return nil
+}
+
+func (store *JsonLaptopStore) Find(id string) (*pb.Laptop, error) {
+	// returns an instance of pb.Laptop given an id
+	// or potentially an error
+	// TODO implement this feature
+	return nil, nil
+}
+
 type InMemoryLaptopStore struct {
 	mutex sync.RWMutex
 	data  map[string]*pb.Laptop
