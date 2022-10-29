@@ -1,4 +1,4 @@
-package cmd
+package api
 
 import (
 	"context"
@@ -53,7 +53,7 @@ func runClient() {
 		if ok && st.Code() == codes.AlreadyExists {
 			log.Println("laptop already exists")
 		} else {
-			log.Fatal("error creating the laptop")
+			log.Fatal("error creating the laptop", err)
 		}
 	}
 	log.Println("created laptop with ID:", res.Id)

@@ -1,7 +1,9 @@
 package main
 
-import "pcbook/cmd"
+import (
+	"pcbook/cmd/api"
+)
 
 func main() {
-	cmd.Execute()
+	api.Execute()
 }
