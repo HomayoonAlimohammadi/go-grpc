@@ -39,6 +39,9 @@ test:
 	go test -cover -race -v -coverprofile=c.out ./...
 	rm -rf tmp
 
+coverage: 
+	go tool cover -func c.out | grep total | awk '{print substr($$3, 1, length($$3)-1)}'
+
 cert:
 	cd cert; ./gen.sh; cd ..
 

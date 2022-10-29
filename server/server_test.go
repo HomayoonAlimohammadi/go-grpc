@@ -7,6 +7,7 @@ import (
 	"os"
 	"pcbook/pb"
 	"pcbook/sample"
+	"pcbook/serializer"
 	"pcbook/server"
 	"testing"
 
@@ -25,11 +26,11 @@ type testCase struct {
 }
 
 func setup() {
-	fmt.Println("Setting up the test environment...")
+	fmt.Printf("\033[1;33m%s\033[0m", "Starting server tests...\n")
 }
 
 func teardown() {
-	fmt.Println("Tearing down the test environment...")
+	fmt.Printf("\033[1;33m%s\033[0m", "Finished server tests.\n")
 }
 
 func TestMain(m *testing.M) {
@@ -148,4 +149,19 @@ func TestClientCreateLaptop(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, res)
 	require.Equal(t, expectedID, res.Id)
+
+	other, err := laptopStore.Find(res.Id)
+	require.NoError(t, err)
+	require.NotNil(t, other)
+	requireSameLaptop(t, laptop, other)
+}
+
+func requireSameLaptop(t *testing.T, first, second *pb.Laptop) {
+	json1, err := serializer.ProtoBufToJSON(first)
+	require.NoError(t, err)
+
+	json2, err := serializer.ProtoBufToJSON(second)
+	require.NoError(t, err)
+
+	require.Equal(t, json1, json2)
 }

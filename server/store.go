@@ -8,7 +8,12 @@ import (
 )
 
 type LaptopStore interface {
+	// saves an instance of pb.Laptop
 	Save(*pb.Laptop) error
+
+	// potentially returns an instance of pb.Laptop and an error
+	// given the ID string of the laptop
+	Find(string) (*pb.Laptop, error)
 }
 
 type InMemoryLaptopStore struct {
@@ -33,6 +38,18 @@ func (store *InMemoryLaptopStore) Save(laptop *pb.Laptop) error {
 
 	store.data[copied.Id] = copied
 	return nil
+}
+
+func (store *InMemoryLaptopStore) Find(id string) (*pb.Laptop, error) {
+	store.mutex.RLock()
+	defer store.mutex.RUnlock()
+
+	laptop := store.data[id]
+	if laptop == nil {
+		return nil, nil
+	}
+
+	return deepCopy(laptop)
 }
 
 func deepCopy(laptop *pb.Laptop) (*pb.Laptop, error) {
